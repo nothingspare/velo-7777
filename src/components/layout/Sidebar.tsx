@@ -43,6 +43,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useTaskStore } from "@/stores/taskStore";
+import { getUnreadInboxCount } from "@/services/db/threads";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -250,6 +251,14 @@ export function Sidebar({ collapsed, onAddAccount }: SidebarProps) {
     return { visibleNavItems: result, showSmartFolders: smartFoldersVisible, showLabels: labelsVisible };
   }, [sidebarNavConfig]);
 
+  const [inboxUnreadCount, setInboxUnreadCount] = useState(0);
+
+  const refreshInboxCount = useCallback(async () => {
+    setInboxUnreadCount(await getUnreadInboxCount());
+  }, []);
+
+  useEffect(() => { refreshInboxCount(); }, [refreshInboxCount]);
+
   const [labelsExpanded, setLabelsExpanded] = useState(false);
 
   // Inline label editing state
@@ -279,7 +288,7 @@ export function Sidebar({ collapsed, onAddAccount }: SidebarProps) {
     }
   }, [activeAccountId, loadSmartFolders, refreshSmartFolderCounts]);
 
-  // Reload labels and smart folder counts on sync completion (debounced to avoid waterfall from multiple emitters)
+  // Reload labels, smart folder counts, and inbox unread count on sync completion (debounced to avoid waterfall from multiple emitters)
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
     const handler = () => {
@@ -289,6 +298,7 @@ export function Sidebar({ collapsed, onAddAccount }: SidebarProps) {
           loadLabels(activeAccountId);
           refreshSmartFolderCounts(activeAccountId);
         }
+        refreshInboxCount();
         useUIStore.getState().setSyncingFolder(null);
       }, 500);
     };
@@ -392,6 +402,11 @@ export function Sidebar({ collapsed, onAddAccount }: SidebarProps) {
                     {item.id === "tasks" && taskIncompleteCount > 0 && !collapsed && (
                       <span className="text-[0.625rem] bg-accent/15 text-accent px-1.5 rounded-full leading-normal">
                         {taskIncompleteCount}
+                      </span>
+                    )}
+                    {isInbox && inboxUnreadCount > 0 && !collapsed && (
+                      <span className="text-[0.625rem] bg-accent/15 text-accent px-1.5 rounded-full leading-normal">
+                        {inboxUnreadCount}
                       </span>
                     )}
                     {isInbox && !collapsed && (
