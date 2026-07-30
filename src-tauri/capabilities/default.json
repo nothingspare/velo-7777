@@ -71,7 +71,6 @@
         { "url": "https://*/*" }
       ]
     },
-    "updater:default",
     "process:allow-restart",
     "os:default"
   ]
