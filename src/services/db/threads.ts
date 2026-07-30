@@ -179,9 +179,13 @@ export async function getThreadCountForAccount(accountId: string): Promise<numbe
 export async function getUnreadInboxCount(): Promise<number> {
   const db = await getDb();
   const rows = await db.select<{ count: number }[]>(
-    `SELECT COUNT(*) as count FROM threads t
-     INNER JOIN thread_labels tl ON tl.account_id = t.account_id AND tl.thread_id = t.id
-     WHERE tl.label_id = 'INBOX' AND t.is_read = 0`,
+    `SELECT COUNT(DISTINCT t.id) as count FROM threads t
+     WHERE t.is_read = 0
+     AND NOT EXISTS (
+       SELECT 1 FROM thread_labels tl
+       WHERE tl.account_id = t.account_id AND tl.thread_id = t.id
+       AND tl.label_id IN ('SPAM', 'SENT', 'DRAFT', 'TRASH')
+     )`,
   );
   return rows[0]?.count ?? 0;
 }
