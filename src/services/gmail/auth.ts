@@ -3,7 +3,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 
 const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-const OAUTH_CALLBACK_PORT = 17248;
+const OAUTH_CALLBACK_PORT = 7777;
 
 const SCOPES = [
   "https://www.googleapis.com/auth/gmail.readonly",
