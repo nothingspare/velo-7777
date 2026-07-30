@@ -5,6 +5,11 @@ let db: Database | null = null;
 export async function getDb(): Promise<Database> {
   if (!db) {
     db = await Database.load("sqlite:velo.db");
+    // WAL mode lets readers and one writer coexist instead of serialising
+    // everything. busy_timeout makes SQLite retry for up to 5s before
+    // surfacing a "database is locked" error.
+    await db.execute("PRAGMA journal_mode=WAL", []);
+    await db.execute("PRAGMA busy_timeout=5000", []);
   }
   return db;
 }
