@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Development — starts Tauri app with Vite dev server (port 1420)
+# Development — starts Tauri app with Vite dev server (port 7777)
 npm run tauri dev
 
 # Build production app
@@ -204,7 +204,7 @@ Key tables (37 total): `accounts` (with `provider` "gmail_api"|"imap", IMAP/SMTP
 - **Snooze**: Removes INBOX label and adds SNOOZED label (not just a flag)
 - **Draft auto-save**: 3-second debounce, not configurable
 - **Gmail History API**: Expires after ~30 days, triggers automatic full sync fallback
-- **Vite HMR**: Uses port 1421 when `TAURI_DEV_HOST` is set
+- **Vite HMR**: Uses port 7778 when `TAURI_DEV_HOST` is set
 - **Vite build**: Multi-page — `index.html` (main app) + `splashscreen.html`
 - **Filter engine**: AND logic for criteria, merges actions when multiple filters match same message
 - **AI providers**: API keys stored in SQLite settings table. Provider selected per-feature in settings. Results cached in `ai_cache` table
